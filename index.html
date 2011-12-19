@@ -69,19 +69,17 @@
 			}
 
 			function initMusic() {
-				if (BrowserDetect.browser === 'Firefox') {
-					// Firefox does not support mp3 files, we play ogg.
-					// I looked and there doesn't seem to be a way to detect 
-					// codec support 
-					song.setAttribute('src', 'audio/nyanlooped.ogg');
-					song2.setAttribute('src', 'audio/nyanslow.ogg');
-				}
-				else { // Chrome, etc.
+				// hilariously, Safari will *only* play the music, at least on my laptop
+				if (BrowserDetect.browser === 'Safari'|| BrowserDetect.browser === 'Explorer') {
 					song.setAttribute('src', 'audio/nyanlooped.mp3');
 					song2.setAttribute('src', 'audio/nyanslow.mp3');
 				}
+				else { // Firefox, Chrome, etc.
+					song.setAttribute('src', 'audio/nyanlooped.ogg');
+					song2.setAttribute('src', 'audio/nyanslow.ogg');
+				}
 
-				// workarounds for looping in Firefox
+				// workarounds for looping in Firefox < 11
 				if (typeof song.loop == 'boolean') {
 				    song.loop = true;
 				} else {
