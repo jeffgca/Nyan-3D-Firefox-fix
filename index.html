@@ -37,11 +37,11 @@
 		<div id="b">Built in WebGL using <a href="http://github.com/mrdoob/three.js">Three.js</a>.</div>
 		<div id="c">Click anywhere to pause.</div>
 		<div id="d">More <a href="http://nyan.cat/" target="_blank">Nyan Cat</a>.</div>
-
-		<script src="../js/Three.js"></script>
-		<script src="../js/Detector.js"></script>
-		<script src="../js/RequestAnimationFrame.js"></script>
-		<script src="../js/Stats.js"></script>
+		<script src="js/BrowserSniffer.js"></script>
+		<script src="js/Three.js"></script>
+		<script src="js/Detector.js"></script>
+		<script src="js/RequestAnimationFrame.js"></script>
+		<script src="js/Stats.js"></script>
 
 		<script>
 			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
@@ -67,12 +67,44 @@
 				mesh.position.z=z+(d/2);
 				o.add( mesh );
 			}
-			function init() {
-				song.setAttribute('src', 'nyanlooped.mp3');
-				song.setAttribute('loop', 'true');
-				song2.setAttribute('src', 'nyanslow.mp3');
-				song2.setAttribute('loop', 'true');
+
+			function initMusic() {
+				if (BrowserDetect.browser === 'Firefox') {
+					// Firefox does not support mp3 files, we play ogg.
+					// I looked and there doesn't seem to be a way to detect 
+					// codec support 
+					song.setAttribute('src', 'audio/nyanlooped.ogg');
+					song2.setAttribute('src', 'audio/nyanslow.ogg');
+				}
+				else { // Chrome, etc.
+					song.setAttribute('src', 'audio/nyanlooped.mp3');
+					song2.setAttribute('src', 'audio/nyanslow.mp3');
+				}
+
+				// workarounds for looping in Firefox
+				if (typeof song.loop == 'boolean') {
+				    song.loop = true;
+				} else {
+				    song.addEventListener('ended', function() {
+				        this.currentTime = 0;
+				        this.play();
+				    }, false);
+				}
+
+				if (typeof song2.loop == 'boolean') {
+				    song2.loop = true;
+				} else {
+				    song2.addEventListener('ended', function() {
+				        this.currentTime = 0;
+				        this.play();
+				    }, false);
+				}
+
 				song.play();
+			}
+
+			function init() {
+				initMusic();
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
@@ -402,5 +434,7 @@
 				renderer.render( scene, camera );
 			}
 		</script>
+
+
 	</body>
 </html>
